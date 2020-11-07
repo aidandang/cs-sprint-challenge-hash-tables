@@ -8,14 +8,6 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
-
-    def __repr__(self):
-        currStr = ""
-        curr = self.head
-        while curr != None:
-            currStr += f'{str(curr.value)} ->'
-            curr = curr.next
-        return currStr
     
     def find(self, value):
         curr = self.head
@@ -72,10 +64,6 @@ class HashTableEntry:
             return self.key == other.key
         return False
 
-
-# Hash table can't have fewer than this many slots
-MIN_CAPACITY = 8
-
 class HashTable:
     """
     A hash table that with `capacity` buckets
@@ -90,7 +78,6 @@ class HashTable:
         self.capacity = capacity
         self.num_elements = 0
 
-
     def get_num_slots(self):
         """
         Return the length of the list you're using to hold the hash
@@ -101,10 +88,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
         return len(self.buckets)
-
 
     def get_load_factor(self):
         """
@@ -112,19 +96,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
         return self.num_elements / self.get_num_slots()
-
-
-    def fnv1(self, key):
-        """
-        FNV-1 Hash, 64-bit
-
-        Implement this, and/or DJB2.
-        """
-
-        # Your code here
-
 
     def djb2(self, key):
         """
@@ -143,7 +115,6 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -154,9 +125,6 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        # self.buckets[self.hash_index(key)] = value
-        
         hash_index = self.hash_index(key)
         if self.buckets[hash_index] != None:
             linked_list = self.buckets[hash_index]
@@ -172,33 +140,6 @@ class HashTable:
         if self.get_load_factor() > 0.7:
             self.resize(self.get_num_slots() * 2)
 
-    def delete(self, key):
-        """
-        Remove the value stored with the given key.
-
-        Print a warning if the key is not found.
-
-        Implement this.
-        """
-        # Your code here
-        # value = self.buckets[self.hash_index(key)]
-        # if value == None:
-        #     print('The key is not found')
-        # self.buckets[self.hash_index(key)] = None
-
-        hash_index = self.hash_index(key)
-        if self.buckets[hash_index] != None:
-            linked_list = self.buckets[hash_index]
-            did_delete_node = linked_list.delete(HashTableEntry(key, None))
-            if did_delete_node != None:
-                self.num_elements -= 1
-                if self.get_load_factor() < 0.2:
-                    new_size = self.get_num_slots() / 2
-                    if new_size >= 8:
-                        self.resize(self.get_num_slots() / 2)
-        else:
-            print('Node not found.')
-
     def get(self, key):
         """
         Retrieve the value stored with the given key.
@@ -207,15 +148,10 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        # value = self.buckets[self.hash_index(key)]
-        # if value == None:
-        #     return None
-        # return self.buckets[self.hash_index(key)]
-
         hash_index = self.hash_index(key)
         if self.buckets[hash_index] != None:
             linked_list = self.buckets[hash_index]
+
             node = linked_list.find(HashTableEntry(key, None))
             if node != None:
                 return node.value.value
@@ -253,66 +189,59 @@ class HashTable:
                 curr_node = temp
                 self.num_elements += 1
 
+def finder(files, queries):
+    """
+    YOUR CODE HERE
+    """
+    # Your code here
 
-ht = HashTable(8)
+    ht = HashTable(len(files))
 
+    for value in files:
+        strs = value.split("/")
+        key = strs[len(strs) - 1]
+        ht.put(key, value)
 
-# if __name__ == "__main__":
-#     ht = HashTable(8)
+    result = []
 
-#     ht.put("line_1", "'Twas brillig, and the slithy toves")
-#     ht.put("line_2", "Did gyre and gimble in the wabe:")
-#     ht.put("line_3", "All mimsy were the borogoves,")
-#     ht.put("line_4", "And the mome raths outgrabe.")
-#     ht.put("line_5", '"Beware the Jabberwock, my son!')
-#     ht.put("line_6", "The jaws that bite, the claws that catch!")
-#     ht.put("line_7", "Beware the Jubjub bird, and shun")
-#     ht.put("line_8", 'The frumious Bandersnatch!"')
-#     ht.put("line_9", "He took his vorpal sword in hand;")
-#     ht.put("line_10", "Long time the manxome foe he sought--")
-#     ht.put("line_11", "So rested he by the Tumtum tree")
-#     ht.put("line_12", "And stood awhile in thought.")
+    for q in queries:
+        found = ht.get(q)
+        if found:
+            result.append(found)
 
-#     print("")
-
-#     # Test storing beyond capacity
-#     for i in range(1, 13):
-#         print(ht.get(f"line_{i}"))
-
-#     # Test resizing
-#     old_capacity = ht.get_num_slots()
-#     ht.resize(ht.capacity * 2)
-#     new_capacity = ht.get_num_slots()
-
-#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
-
-#     # Test if data intact after resizing
-#     for i in range(1, 13):
-#         print(ht.get(f"line_{i}"))
-
-#     print("")
-
-
-
-
-# def finder(files, queries):
-#     """
-#     YOUR CODE HERE
-#     """
-#     # Your code here
-
-#     return result
-
+    return result
 
 # if __name__ == "__main__":
-#     files = [
-#         '/bin/foo',
-#         '/bin/bar',
-#         '/usr/bin/baz'
-#     ]
-#     queries = [
-#         "foo",
-#         "qux",
-#         "baz"
-#     ]
-#     print(finder(files, queries))
+    # files = [
+    #     '/bin/foo',
+    #     '/bin/bar',
+    #     '/usr/bin/baz'
+    # ]
+    # queries = [
+    #     "foo",
+    #     "qux",
+    #     "baz"
+    # ]
+    # print(finder(files, queries))
+
+files = []
+
+for i in range(500000):
+    files.append(f"/dir{i}/file{i}")
+
+for i in range(500000):
+    files.append(f"/dir{i}/dirb{i}/file{i}")
+
+queries = []
+
+for i in range(1000000):
+    queries.append(f"nofile{i}")
+
+queries += [
+    "file3490",
+    "file256",
+    "file999999",
+    "file8192"
+]
+
+print(finder(files, queries))
